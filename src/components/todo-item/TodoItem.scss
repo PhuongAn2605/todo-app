@@ -1,0 +1,23 @@
+.todo-item{
+    background-color: #fff;
+    width: 500px;
+    margin: auto !important;
+    border: 1px solid #ccc;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    &__title{
+        &--completed{
+            text-decoration: line-through;
+            color: #bbb;
+            margin-left: 1rem;
+
+        }
+        &--uncompleted{
+            margin-left: 1rem;
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
+
 import "./Input.scss";
 
 class InputField extends React.Component {

@@ -4,54 +4,42 @@ import InputField from "./components/input/Input";
 import TodoItem from "./components/todo-item/TodoItem";
 
 class App extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       todoItems: [
-        // { title: "Learn NodeJS", isCompleted: false },
-        // { title: "Learn React", isCompleted: false },
+        { title: "Learn NodeJS", isCompleted: false },
+        { title: "Learn React", isCompleted: false },
       ],
       newItem: "",
-      unCompletedItems: 0,
+      unCompletedItems: 2,
     };
     // this.onItemClicked = this.onItemClicked.bind(this);
   }
+
+  componentDidMount() {}
 
   onItemClicked(item) {
     const isCompleted = item.isCompleted;
     // console.log(isCompleted)
     const { todoItems } = this.state;
     const index = todoItems.indexOf(item);
-    // console.log(index);
-    // let count = 0;
-    // if(todoItems.length !== 0){
-    //   for(let item of todoItems){
-    //     console.log(item)
-    //     if(!item.isCompleted){
-    //       count ++;
-    //     }
-    //   }
-    // }
-    console.log(!item.isCompleted);
-    this.setState(prevState => ({
+    this.setState({
       todoItems: [
-        ...prevState.todoItems.slice(0, index),
+        ...todoItems.slice(0, index),
         {
-          title: item.title,
+          ...item,
           isCompleted: !isCompleted,
         },
-        ...prevState.todoItems.slice(index + 1),
+        ...todoItems.slice(index + 1),
       ],
-      unCompletedItems: todoItems.filter(item => item.isCompleted === false).length - 1
-    }));
-    console.log(todoItems.filter(item => item.isCompleted === false));
-
+      unCompletedItems: isCompleted
+        ? this.state.unCompletedItems + 1
+        : this.state.unCompletedItems - 1,
+    });
   }
 
   handleAddItem(title) {
-    // const {todoItems} = this.state;
-
-
     if (title.length > 0) {
       this.setState((prevState, props) => ({
         todoItems: [
@@ -61,7 +49,7 @@ class App extends React.Component {
             isCompleted: false,
           },
         ],
-        unCompletedItems: this.state.unCompletedItems + 1
+        unCompletedItems: this.state.unCompletedItems + 1,
       }));
     }
   }
@@ -78,9 +66,24 @@ class App extends React.Component {
       });
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
-        unCompletedItems: 0
+        unCompletedItems: 0,
       }));
     }
+  }
+
+  handleEditTitle(item, title) {
+    const { todoItems } = this.state;
+    const index = todoItems.indexOf(item);
+    this.setState({
+      todoItems: [
+        ...todoItems.slice(0, index),
+        {
+          ...item,
+          title
+        },
+        ...todoItems.slice(index + 1),
+      ],
+    });
   }
 
   render() {
@@ -101,6 +104,7 @@ class App extends React.Component {
               key={index}
               item={item}
               toggleCompleted={() => this.onItemClicked(item)}
+              editTitle={(item, title) => this.handleEditTitle(item, title)}
             />
           ))}
         {todoItems.length > 0 && (

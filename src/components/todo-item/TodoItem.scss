@@ -9,6 +9,15 @@
     justify-content: flex-start;
     align-items: center;
 
+    input{
+        border: none;
+        padding: 1rem;
+    }
+    input:focus{
+        outline: none !important;
+        font-size: normal;
+    }
+
     &__title{
         &--completed{
             text-decoration: line-through;

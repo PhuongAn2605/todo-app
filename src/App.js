@@ -11,19 +11,54 @@ class App extends React.Component {
         { title: "Learn NodeJS", isCompleted: false },
         { title: "Learn React", isCompleted: false },
       ],
-      newItem: "",
+      currentFilter: "all",
+      filteredItems: [],
       unCompletedItems: 2,
+      completedAll: false,
     };
+
+    // this.showedTodoItem = [];
     // this.onItemClicked = this.onItemClicked.bind(this);
   }
 
-  componentDidMount() {}
+  // componentDidMount() {
+  //   const { currentFilter, todoItems } = this.state;
+  //   if(currentFilter === "all"){
+  //     for(let item of todoItems){
+  //       this.showedTodoItem.push(item);
+  //     }
+  //   }else if(currentFilter === "active"){
+  //     this.showedTodoItem = todoItems.filter(item => item.isCompleted === false);
+  //   }else{
+  //     this.showedTodoItem = todoItems.filter(item => item.isCompleted === true);
+  //   }
+  // }
+
+  componentDidMount() {
+    this.setState({
+      ...this.state,
+      currentFilter: "all",
+      filteredItems: [...this.state.todoItems],
+    });
+  }
+
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  // componentWillReceiveProps(nextProps){
+  //   if(nextProps.todoItems !== this.state.todoItems){
+  //     console.log('change')
+  //   }
+  // }
 
   onItemClicked(item) {
     const isCompleted = item.isCompleted;
     // console.log(isCompleted)
-    const { todoItems } = this.state;
+    const { todoItems, filteredItems, currentFilter } = this.state;
     const index = todoItems.indexOf(item);
+    const filteredIndex = filteredItems.indexOf(item);
+
     this.setState({
       todoItems: [
         ...todoItems.slice(0, index),
@@ -33,6 +68,17 @@ class App extends React.Component {
         },
         ...todoItems.slice(index + 1),
       ],
+      filteredItems:
+        currentFilter === "all"
+          ? [
+              ...filteredItems.slice(0, filteredIndex),
+              {
+                ...item,
+                isCompleted: !isCompleted,
+              },
+              ...filteredItems.slice(filteredIndex + 1),
+            ]
+          : filteredItems.slice(filteredIndex, 1),
       unCompletedItems: isCompleted
         ? this.state.unCompletedItems + 1
         : this.state.unCompletedItems - 1,
@@ -40,54 +86,117 @@ class App extends React.Component {
   }
 
   handleAddItem(title) {
+    const newItem = {
+      title,
+      isCompleted: false,
+    };
     if (title.length > 0) {
       this.setState((prevState, props) => ({
-        todoItems: [
-          ...prevState.todoItems,
-          {
-            title,
-            isCompleted: false,
-          },
-        ],
+        todoItems: [...prevState.todoItems, newItem],
+        filteredItems:
+          this.state.currentFilter === "all" ||
+          this.state.currentFilter === "active"
+            ? [...this.state.filteredItems, newItem]
+            : [...this.state.filteredItems],
         unCompletedItems: this.state.unCompletedItems + 1,
       }));
     }
   }
 
-  handleCompletedAll() {
+  handleToogleCompletedAll() {
     const { todoItems } = this.state;
     let todoItems_temp = [];
+
     for (let item of todoItems) {
       // console.log(item);
 
       todoItems_temp.push({
         title: item.title,
-        isCompleted: true,
+        isCompleted: this.state.completedAll ? false : true,
       });
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
+        filteredItems: todoItems_temp,
         unCompletedItems: 0,
+        completedAll: !this.state.completedAll,
       }));
     }
   }
 
   handleEditTitle(item, title) {
-    const { todoItems } = this.state;
+    const { todoItems, filteredItems } = this.state;
     const index = todoItems.indexOf(item);
+    const filteredIndex = filteredItems.indexOf(item);
+
     this.setState({
       todoItems: [
         ...todoItems.slice(0, index),
         {
           ...item,
-          title
+          title,
         },
         ...todoItems.slice(index + 1),
+      ],
+      filteredItems: [
+        ...filteredItems.slice(0, filteredIndex),
+        {
+          ...item,
+          title,
+        },
+        ...filteredItems.slice(filteredIndex + 1),
       ],
     });
   }
 
+  handleShowAllItems() {
+    this.setState({
+      ...this.state,
+      currentFilter: "all",
+      filteredItems: [...this.state.todoItems],
+    });
+  }
+
+  handleShowActiveItems() {
+    console.log(
+      this.state.todoItems.filter((item) => item.isCompleted === false)
+    );
+    this.setState({
+      ...this.state,
+      currentFilter: "active",
+      filteredItems: this.state.todoItems.filter(
+        (item) => item.isCompleted === false
+      ),
+    });
+    console.log(this.state.filteredItems);
+  }
+
+  handleShowCompletedItems() {
+    this.setState({
+      ...this.state,
+      currentFilter: "completed",
+      filteredItems: this.state.todoItems.filter(
+        (item) => item.isCompleted === true
+      ),
+    });
+    console.log(
+      this.state.todoItems.filter((item) => item.isCompleted === true)
+    );
+  }
+
+  handleClearCompleted() {
+    this.setState({
+      ...this.state,
+      todoItems: this.state.todoItems.filter(
+        (item) => item.isCompleted === false
+      ),
+      filteredItems: this.state.filteredItems.filter(
+        (item) => item.isCompleted === false
+      ),
+    });
+  }
+
   render() {
-    const { todoItems, unCompletedItems } = this.state;
+    const { filteredItems, unCompletedItems, currentFilter } = this.state;
     // console.log(todoItems);
     return (
       <div className="App">
@@ -96,10 +205,10 @@ class App extends React.Component {
         </header>
         <InputField
           addItem={(title) => this.handleAddItem(title)}
-          completedAll={() => this.handleCompletedAll()}
+          completedAll={() => this.handleToogleCompletedAll()}
         />
-        {todoItems.length > 0 &&
-          todoItems.map((item, index) => (
+        {filteredItems.length > 0 &&
+          filteredItems.map((item, index) => (
             <TodoItem
               key={index}
               item={item}
@@ -107,7 +216,7 @@ class App extends React.Component {
               editTitle={(item, title) => this.handleEditTitle(item, title)}
             />
           ))}
-        {todoItems.length > 0 && (
+        {this.state.todoItems.length > 0 && (
           <div className="footer">
             <div className="footer__left-item">
               {unCompletedItems > 1
@@ -115,9 +224,30 @@ class App extends React.Component {
                 : `${unCompletedItems} item left`}
             </div>
             <div className="footer__right-item">
-              <span className="all">All</span>
-              <span className="active">Active</span>
-              <span className="completed">Completed</span>
+              <span
+                className={currentFilter === "all" ? "active-span" : ""}
+                onClick={() => this.handleShowAllItems()}
+              >
+                All
+              </span>
+              <span
+                className={currentFilter === "active" ? "active-span" : ""}
+                onClick={() => this.handleShowActiveItems()}
+              >
+                Active
+              </span>
+              <span
+                className={currentFilter === "completed" ? "active-span" : ""}
+                onClick={() => this.handleShowCompletedItems()}
+              >
+                Completed
+              </span>
+            </div>
+            <div
+              className="clear-completed"
+              onClick={() => this.handleClearCompleted()}
+            >
+              Clear Completed
             </div>
           </div>
         )}

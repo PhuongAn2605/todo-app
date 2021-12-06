@@ -22,18 +22,34 @@
   display: flex;
   text-align: center;
 
+  color: rgb(124, 122, 122);
+
   &__right-item{
     display: flex;
     margin: auto;
+
     span{
       padding: 0.2rem;
       margin-left: 1rem;
+  // color: rgb(124, 122, 122);
+
     }
     span:hover{
       border: 1px solid #bbb;
-      border-radius: 2px;
+      border-radius: 3px;
+      background-color: #eee;
     }
-    
+    .active-span{
+      border: 1px solid #bbb;
+      border-radius: 3px; 
+      background-color: #eee;
+
+    }
+  }
+
+  .clear-completed:hover{
+    text-decoration: underline;
+
   }
   
 

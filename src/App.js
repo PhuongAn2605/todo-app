@@ -31,10 +31,10 @@ class App extends React.Component {
   }
 
   onItemClicked(item) {
-    // console.log(item)
+    console.log(item)
     const isCompleted = item.isCompleted;
     // console.log(isCompleted)
-    const { todoItems, filteredItems, currentFilter } = this.state;
+    // const { todoItems, filteredItems, currentFilter } = this.state;
     // const index = todoItems.indexOf(item);
     // const filteredIndex = filteredItems.indexOf(item);
 
@@ -86,10 +86,17 @@ class App extends React.Component {
       todoItems_temp.push({
         title: item.title,
         isCompleted: this.state.completedAll ? false : true,
+        id: item.id
       });
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
-        filteredItems: todoItems_temp,
+        filteredItems: () => {
+          if(!prevState.completedAll && prevState.currentFilter === "active"){
+            return prevState.filteredItems.map(i => i.isCompleted === false)
+          }else{
+            return todoItems_temp;
+          }
+        },
         unCompletedItems: todoItems_temp.filter(
           (item) => item.isCompleted === false
         ).length,

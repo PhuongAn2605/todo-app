@@ -117,7 +117,7 @@ class App extends React.Component {
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
         filteredItems: todoItems_temp,
-        unCompletedItems: 0,
+        unCompletedItems: todoItems_temp.filter(item => item.isCompleted === false).length,
         completedAll: !this.state.completedAll,
       }));
     }

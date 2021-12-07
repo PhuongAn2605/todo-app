@@ -14,18 +14,18 @@ class TodoItem extends React.Component {
   }
 
   componentDidMount() {
-    console.log('mounted');
+    // console.log('mounted');
     const { item } = this.props;
 
     this.setState({ title: item.title });
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    console.log(nextProps);
-    console.log(prevState);
-    console.log('derived')
+    // console.log(nextProps);
+    // console.log(prevState);
+    // console.log('derived')
     if (nextProps.item.title !== prevState.title && !prevState.edit) {
-      console.log('diff')
+      // console.log('diff')
       return { title: nextProps.item.title, edit: prevState.edit };
     } else if(nextProps.item.title !== prevState.title && prevState.edit){
       return { title: prevState.title, edit: prevState.edit }
@@ -34,7 +34,7 @@ class TodoItem extends React.Component {
     else {
       // console.log(prevState.title)
       // return {title: prevState.title};
-      console.log("not update");
+      // console.log("not update");
       return null;
     }
   }

@@ -1,5 +1,7 @@
 import React from "react";
 import "./App.scss";
+import { v4 as uuidv4 } from "uuid";
+
 import InputField from "./components/input/Input";
 import TodoItem from "./components/todo-item/TodoItem";
 
@@ -8,98 +10,69 @@ class App extends React.Component {
     super(props);
     this.state = {
       todoItems: [
-        { title: "Learn NodeJS", isCompleted: false },
-        { title: "Learn React", isCompleted: false },
+        // { title: "Learn NodeJS", isCompleted: false },
+        // { title: "Learn React", isCompleted: false },
       ],
       currentFilter: "all",
       filteredItems: [],
-      unCompletedItems: 2,
+      unCompletedItems: 0,
       completedAll: false,
+      // isUpdating: false
     };
-
-    // this.showedTodoItem = [];
-    // this.onItemClicked = this.onItemClicked.bind(this);
   }
 
-  // componentDidMount() {
-  //   const { currentFilter, todoItems } = this.state;
-  //   if(currentFilter === "all"){
-  //     for(let item of todoItems){
-  //       this.showedTodoItem.push(item);
-  //     }
-  //   }else if(currentFilter === "active"){
-  //     this.showedTodoItem = todoItems.filter(item => item.isCompleted === false);
-  //   }else{
-  //     this.showedTodoItem = todoItems.filter(item => item.isCompleted === true);
-  //   }
-  // }
-
-  componentDidMount() {
-    this.setState({
-      ...this.state,
-      currentFilter: "all",
-      filteredItems: [...this.state.todoItems],
-    });
-  }
-
-  shouldComponentUpdate() {
+  shouldComponentUpdate(nextProps, nextState) {
+    // console.log(nextState);
     return true;
   }
 
-  // componentWillReceiveProps(nextProps){
-  //   if(nextProps.todoItems !== this.state.todoItems){
-  //     console.log('change')
-  //   }
-  // }
+  componentDidUpdate() {
+    console.log("Did update");
+  }
 
   onItemClicked(item) {
+    // console.log(item)
     const isCompleted = item.isCompleted;
     // console.log(isCompleted)
     const { todoItems, filteredItems, currentFilter } = this.state;
-    const index = todoItems.indexOf(item);
-    const filteredIndex = filteredItems.indexOf(item);
+    // const index = todoItems.indexOf(item);
+    // const filteredIndex = filteredItems.indexOf(item);
 
-    this.setState({
-      todoItems: [
-        ...todoItems.slice(0, index),
-        {
-          ...item,
-          isCompleted: !isCompleted,
-        },
-        ...todoItems.slice(index + 1),
-      ],
+    this.setState((prevState) => ({
+      todoItems: prevState.todoItems.map((i) =>
+        i.id === item.id ? { ...i, isCompleted: !isCompleted } : i
+      ),
       filteredItems:
-        currentFilter === "all"
-          ? [
-              ...filteredItems.slice(0, filteredIndex),
-              {
-                ...item,
-                isCompleted: !isCompleted,
-              },
-              ...filteredItems.slice(filteredIndex + 1),
-            ]
-          : filteredItems.slice(filteredIndex, 1),
+        prevState.currentFilter === "all"
+          ? prevState.filteredItems.map((i) =>
+              i.id === item.id ? { ...i, isCompleted: !isCompleted } : i
+            )
+          : prevState.filteredItems.filter((i) => i.id !== item.id),
       unCompletedItems: isCompleted
-        ? this.state.unCompletedItems + 1
-        : this.state.unCompletedItems - 1,
-    });
+        ? prevState.unCompletedItems + 1
+        : prevState.unCompletedItems - 1,
+    }));
   }
 
   handleAddItem(title) {
-    const newItem = {
-      title,
-      isCompleted: false,
-    };
-    if (title.length > 0) {
-      this.setState((prevState, props) => ({
-        todoItems: [...prevState.todoItems, newItem],
-        filteredItems:
-          this.state.currentFilter === "all" ||
-          this.state.currentFilter === "active"
-            ? [...this.state.filteredItems, newItem]
-            : [...this.state.filteredItems],
-        unCompletedItems: this.state.unCompletedItems + 1,
-      }));
+    if (title.trim().length > 0) {
+      const newItem = {
+        title: title.trim(),
+        isCompleted: false,
+        id: uuidv4(),
+      };
+      // console.log(newItem)
+      if (title.length > 0) {
+        this.setState((prevState, props) => ({
+          todoItems: [...prevState.todoItems, newItem],
+          filteredItems:
+            prevState.currentFilter === "all" ||
+            prevState.currentFilter === "active"
+              ? [...prevState.filteredItems, newItem]
+              : [...prevState.filteredItems],
+          unCompletedItems: prevState.unCompletedItems + 1,
+        }));
+      }
     }
   }
 
@@ -117,7 +90,9 @@ class App extends React.Component {
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
         filteredItems: todoItems_temp,
-        unCompletedItems: todoItems_temp.filter(item => item.isCompleted === false).length,
+        unCompletedItems: todoItems_temp.filter(
+          (item) => item.isCompleted === false
+        ).length,
         completedAll: !this.state.completedAll,
       }));
     }
@@ -149,6 +124,7 @@ class App extends React.Component {
   }
 
   handleShowAllItems() {
+    // console.log(this.state.todoItems);
     this.setState({
       ...this.state,
       currentFilter: "all",
@@ -157,9 +133,9 @@ class App extends React.Component {
   }
 
   handleShowActiveItems() {
-    console.log(
-      this.state.todoItems.filter((item) => item.isCompleted === false)
-    );
+    // console.log(
+    //   this.state.todoItems.filter((item) => item.isCompleted === false)
+    // );
     this.setState({
       ...this.state,
       currentFilter: "active",
@@ -167,7 +143,7 @@ class App extends React.Component {
         (item) => item.isCompleted === false
       ),
     });
-    console.log(this.state.filteredItems);
+    // console.log(this.state.filteredItems);
   }
 
   handleShowCompletedItems() {
@@ -178,9 +154,9 @@ class App extends React.Component {
         (item) => item.isCompleted === true
       ),
     });
-    console.log(
-      this.state.todoItems.filter((item) => item.isCompleted === true)
-    );
+    // console.log(
+    //   this.state.todoItems.filter((item) => item.isCompleted === true)
+    // );
   }
 
   handleClearCompleted() {

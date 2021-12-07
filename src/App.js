@@ -90,17 +90,20 @@ class App extends React.Component {
       });
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
-        filteredItems: () => {
-          if(!prevState.completedAll && prevState.currentFilter === "active"){
-            return prevState.filteredItems.map(i => i.isCompleted === false)
-          }else{
-            return todoItems_temp;
-          }
-        },
+       
         unCompletedItems: todoItems_temp.filter(
           (item) => item.isCompleted === false
         ).length,
         completedAll: !this.state.completedAll,
+        // filteredItems: () => {
+        //   console.log(prevState)
+        //   if(this.state.completedAll && prevState.currentFilter === "active"){
+        //     return prevState.filteredItems.map(i => i.isCompleted === false)
+        //   }else{
+        //     return todoItems_temp;
+        //   }
+        // }
+        filteredItems: (prevState.currentFilter === "active" && !this.state.completedAll) || (prevState.currentFilter === "completed" && this.state.completedAll) ? [] : todoItems_temp
       }));
     }
   }

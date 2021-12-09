@@ -33,9 +33,11 @@ class InputField extends React.Component {
           type="text"
           placeholder="What needs to be done?"
           value={inputValue}
+          required
           onChange={(event) => this.handleChangeInput(event)}
           onKeyPress={event => {
               if(event.key === 'Enter'){
+                event.preventDefault();
                   addItem(inputValue);
                   this.setState({
                       inputValue: ''

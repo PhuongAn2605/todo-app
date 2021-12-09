@@ -2,8 +2,12 @@ import React from "react";
 import "./App.scss";
 import { v4 as uuidv4 } from "uuid";
 
+// import { Switch, Link, Route, Browser as Router } from 'react-router-dom'; 
+
 import InputField from "./components/input/Input";
 import TodoItem from "./components/todo-item/TodoItem";
+import FormDemo from "./components/form/FormDemo";
+import { FormStyles } from './components/form/FormDemo.styles';
 
 class App extends React.Component {
   constructor(props) {
@@ -17,12 +21,13 @@ class App extends React.Component {
       filteredItems: [],
       unCompletedItems: 0,
       completedAll: false,
-      // isUpdating: false
+
+      userinfo: []
+
     };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // console.log(nextState);
     return true;
   }
 
@@ -31,12 +36,8 @@ class App extends React.Component {
   }
 
   onItemClicked(item) {
-    console.log(item)
+    console.log(item);
     const isCompleted = item.isCompleted;
-    // console.log(isCompleted)
-    // const { todoItems, filteredItems, currentFilter } = this.state;
-    // const index = todoItems.indexOf(item);
-    // const filteredIndex = filteredItems.indexOf(item);
 
     this.setState((prevState) => ({
       todoItems: prevState.todoItems.map((i) =>
@@ -86,24 +87,20 @@ class App extends React.Component {
       todoItems_temp.push({
         title: item.title,
         isCompleted: this.state.completedAll ? false : true,
-        id: item.id
+        id: item.id,
       });
       this.setState((prevState) => ({
         todoItems: todoItems_temp,
-       
+
         unCompletedItems: todoItems_temp.filter(
           (item) => item.isCompleted === false
         ).length,
         completedAll: !this.state.completedAll,
-        // filteredItems: () => {
-        //   console.log(prevState)
-        //   if(this.state.completedAll && prevState.currentFilter === "active"){
-        //     return prevState.filteredItems.map(i => i.isCompleted === false)
-        //   }else{
-        //     return todoItems_temp;
-        //   }
-        // }
-        filteredItems: (prevState.currentFilter === "active" && !this.state.completedAll) || (prevState.currentFilter === "completed" && this.state.completedAll) ? [] : todoItems_temp
+        filteredItems:
+          (prevState.currentFilter === "active" && !this.state.completedAll) ||
+          (prevState.currentFilter === "completed" && this.state.completedAll)
+            ? []
+            : todoItems_temp,
       }));
     }
   }
@@ -134,7 +131,6 @@ class App extends React.Component {
   }
 
   handleShowAllItems() {
-    // console.log(this.state.todoItems);
     this.setState({
       ...this.state,
       currentFilter: "all",
@@ -143,9 +139,6 @@ class App extends React.Component {
   }
 
   handleShowActiveItems() {
-    // console.log(
-    //   this.state.todoItems.filter((item) => item.isCompleted === false)
-    // );
     this.setState({
       ...this.state,
       currentFilter: "active",
@@ -153,7 +146,6 @@ class App extends React.Component {
         (item) => item.isCompleted === false
       ),
     });
-    // console.log(this.state.filteredItems);
   }
 
   handleShowCompletedItems() {
@@ -164,9 +156,6 @@ class App extends React.Component {
         (item) => item.isCompleted === true
       ),
     });
-    // console.log(
-    //   this.state.todoItems.filter((item) => item.isCompleted === true)
-    // );
   }
 
   handleClearCompleted() {
@@ -181,9 +170,20 @@ class App extends React.Component {
     });
   }
 
+  handleChangeUserinfo(info){
+    console.log(info)
+    this.setState(prevState => ({
+      ...prevState,
+      userinfo: [...this.state.userinfo, info]
+    }))
+    console.log(this.state.userinfo)
+
+  }
+
   render() {
     const { filteredItems, unCompletedItems, currentFilter } = this.state;
-    // console.log(todoItems);
+    const {username, email} = this.state.userinfo;
+    const {userinfo} = this.state;
     return (
       <div className="App">
         <header className="App-header">
@@ -236,6 +236,17 @@ class App extends React.Component {
               Clear Completed
             </div>
           </div>
+        )}
+
+        <FormDemo changeInfo={(info) => this.handleChangeUserinfo(info)}/>
+        {userinfo.length > 0 ? (
+          userinfo.map((user) => (
+            <FormStyles style={{flexDirection: "row"}}>
+              <span>{user.username}</span> - <span>{user.email}</span>
+            </FormStyles>
+          ))
+        ) : (
+          <FormStyles>No existing user!</FormStyles>
         )}
       </div>
     );

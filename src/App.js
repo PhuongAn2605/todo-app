@@ -2,6 +2,7 @@ import React from "react";
 import "./App.scss";
 import { v4 as uuidv4 } from "uuid";
 
+
 // import { Switch, Link, Route, Browser as Router } from 'react-router-dom'; 
 
 import InputField from "./components/input/Input";
@@ -180,6 +181,16 @@ class App extends React.Component {
 
   }
 
+  handleRemoveItem(item){
+    this.setState(prevState => ({
+      ...prevState,
+      todoItems: prevState.todoItems.filter(i => i.id !== item.id),
+      filteredItems: prevState.filteredItems.filter(i => i.id !== item.id),
+      unCompletedItems: !item.isCompleted ? prevState.unCompletedItems - 1 : prevState.unCompletedItems
+    }))
+
+  }
+
   render() {
     const { filteredItems, unCompletedItems, currentFilter } = this.state;
     const {username, email} = this.state.userinfo;
@@ -200,6 +211,7 @@ class App extends React.Component {
               item={item}
               toggleCompleted={() => this.onItemClicked(item)}
               editTitle={(item, title) => this.handleEditTitle(item, title)}
+              removeItem={item => this.handleRemoveItem(item)}
             />
           ))}
         {this.state.todoItems.length > 0 && (

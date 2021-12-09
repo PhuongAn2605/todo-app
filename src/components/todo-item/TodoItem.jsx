@@ -1,6 +1,8 @@
 import React from "react";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import "./TodoItem.scss";
 
@@ -38,8 +40,8 @@ class TodoItem extends React.Component {
   }
 
   render() {
-    const { item, toggleCompleted, editTitle } = this.props;
-
+    const { item, toggleCompleted, editTitle, removeItem } = this.props;
+    const { edit } = this.state;
     return (
       <div className="todo-item">
         {item.isCompleted ? (
@@ -47,7 +49,7 @@ class TodoItem extends React.Component {
         ) : (
           <CircleOutlinedIcon onClick={toggleCompleted} />
         )}
-        <input
+        {edit && <input
           className={
             item.isCompleted
               ? "todo-item__title--completed"
@@ -63,9 +65,29 @@ class TodoItem extends React.Component {
           onKeyPress={(event) => {
             if (event.key === "Enter") {
               editTitle(item, this.state.title);
+              this.setState({
+                ...this.state,
+                edit: false
+              })
             }
           }}
-        />
+        />}
+        {!edit && <div
+          className={
+            item.isCompleted
+              ? "todo-item__title--completed"
+              : "todo-item__title--uncompleted"
+          }
+        >{this.state.title}</div>}
+        <div className="icons" style={{color: "#6e6b6b"}}>
+        <EditIcon onClick={()=> {
+          this.setState({
+            ...this.state,
+            edit: !this.state.edit
+          })
+        }} />
+        <DeleteIcon onClick={ () => removeItem(item)}/>
+        </div>
       </div>
     );
   }

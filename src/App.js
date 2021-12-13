@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.scss";
 import { v4 as uuidv4 } from "uuid";
 
@@ -10,247 +10,169 @@ import TodoItem from "./components/todo-item/TodoItem";
 import FormDemo from "./components/form/FormDemo";
 import { FormStyles } from './components/form/FormDemo.styles';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      todoItems: [
-        // { title: "Learn NodeJS", isCompleted: false },
-        // { title: "Learn React", isCompleted: false },
-      ],
-      currentFilter: "all",
-      filteredItems: [],
-      unCompletedItems: 0,
-      completedAll: false,
+const App = () => {
 
-      userinfo: []
+  const [todoItems, setTodoItems] = useState([]);
+  const [currentFilter, setCurrentFilter] = useState("all");
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [uncompletedItems, setUncompletedItems] = useState(0);
+  const [completedAll, setCompletedAll] = useState(false);
 
-    };
-  }
+  const [userinfo, setUserInfo] = useState([]);
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return true;
-  }
+  useEffect(() => {
+    console.log(todoItems)
+    setUncompletedItems(todoItems && todoItems.filter(i => !i.isCompleted).length);
 
-  componentDidUpdate() {
-    console.log("Did update");
-  }
+  }, [todoItems]);
 
-  onItemClicked(item) {
-    console.log(item);
+  useEffect(() => {
+    if(currentFilter === "all"){
+      setFilteredItems(todoItems);
+    }else if(currentFilter === "completed"){
+      setFilteredItems(todoItems.filter(i => i.isCompleted));
+    }else{
+      setFilteredItems(todoItems.filter(i => !i.isCompleted));
+    }
+
+  }, [currentFilter, todoItems]);
+
+  const onItemClicked = (item) => {
     const isCompleted = item.isCompleted;
 
-    this.setState((prevState) => ({
-      todoItems: prevState.todoItems.map((i) =>
-        i.id === item.id ? { ...i, isCompleted: !isCompleted } : i
-      ),
-      filteredItems:
-        prevState.currentFilter === "all"
-          ? prevState.filteredItems.map((i) =>
-              i.id === item.id ? { ...i, isCompleted: !isCompleted } : i
-            )
-          : prevState.filteredItems.filter((i) => i.id !== item.id),
-      unCompletedItems: isCompleted
-        ? prevState.unCompletedItems + 1
-        : prevState.unCompletedItems - 1,
-    }));
+    setTodoItems(todoItems.map(i => i.id === item.id ? {...i, isCompleted: !isCompleted} : i));
+    
   }
 
-  handleAddItem(title) {
+  const handleAddItem = (title) => {
     if (title.trim().length > 0) {
       const newItem = {
         title: title.trim(),
         isCompleted: false,
         id: uuidv4(),
       };
-      // console.log(newItem)
-      if (title.length > 0) {
-        this.setState((prevState, props) => ({
-          todoItems: [...prevState.todoItems, newItem],
-          filteredItems:
-            prevState.currentFilter === "all" ||
-            prevState.currentFilter === "active"
-              ? [...prevState.filteredItems, newItem]
-              : [...prevState.filteredItems],
-          unCompletedItems: prevState.unCompletedItems + 1,
-        }));
+
+      const todoItems_temp = [...todoItems];
+      todoItems_temp.push(newItem);
+      if (title.trim().length > 0) {
+        setTodoItems(todoItems_temp);
       }
     }
   }
 
-  handleToogleCompletedAll() {
-    const { todoItems } = this.state;
+  const handleToogleCompletedAll = () => {
     let todoItems_temp = [];
 
     for (let item of todoItems) {
-      // console.log(item);
-
       todoItems_temp.push({
         title: item.title,
-        isCompleted: this.state.completedAll ? false : true,
+        isCompleted: completedAll ? false : true,
         id: item.id,
       });
-      this.setState((prevState) => ({
-        todoItems: todoItems_temp,
+      setTodoItems(todoItems_temp);
+      setCompletedAll(!completedAll);
 
-        unCompletedItems: todoItems_temp.filter(
-          (item) => item.isCompleted === false
-        ).length,
-        completedAll: !this.state.completedAll,
-        filteredItems:
-          (prevState.currentFilter === "active" && !this.state.completedAll) ||
-          (prevState.currentFilter === "completed" && this.state.completedAll)
-            ? []
-            : todoItems_temp,
-      }));
     }
   }
 
-  handleEditTitle(item, title) {
-    const { todoItems, filteredItems } = this.state;
+  const handleEditTitle = (item, title) => {
     const index = todoItems.indexOf(item);
     const filteredIndex = filteredItems.indexOf(item);
 
-    this.setState({
-      todoItems: [
-        ...todoItems.slice(0, index),
-        {
-          ...item,
-          title,
-        },
-        ...todoItems.slice(index + 1),
-      ],
-      filteredItems: [
-        ...filteredItems.slice(0, filteredIndex),
-        {
-          ...item,
-          title,
-        },
-        ...filteredItems.slice(filteredIndex + 1),
-      ],
-    });
+    setTodoItems([
+      ...todoItems.slice(0, index),
+      {
+        ...item,
+        title
+      },
+      ...todoItems.slice(index + 1)
+    ])
   }
 
-  handleShowAllItems() {
-    this.setState({
-      ...this.state,
-      currentFilter: "all",
-      filteredItems: [...this.state.todoItems],
-    });
+  const handleShowAllItems = () => {
+    setCurrentFilter("all");
   }
 
-  handleShowActiveItems() {
-    this.setState({
-      ...this.state,
-      currentFilter: "active",
-      filteredItems: this.state.todoItems.filter(
-        (item) => item.isCompleted === false
-      ),
-    });
+  const handleShowActiveItems = () => {
+    setCurrentFilter("active");
   }
 
-  handleShowCompletedItems() {
-    this.setState({
-      ...this.state,
-      currentFilter: "completed",
-      filteredItems: this.state.todoItems.filter(
-        (item) => item.isCompleted === true
-      ),
-    });
+  const handleShowCompletedItems = () => {
+    setCurrentFilter("completed");
   }
 
-  handleClearCompleted() {
-    this.setState({
-      ...this.state,
-      todoItems: this.state.todoItems.filter(
-        (item) => item.isCompleted === false
-      ),
-      filteredItems: this.state.filteredItems.filter(
-        (item) => item.isCompleted === false
-      ),
-    });
+  const handleClearCompleted = () => {
+    setTodoItems(todoItems.filter(i => !i.isCompleted));
   }
 
-  handleChangeUserinfo(info){
-    console.log(info)
-    this.setState(prevState => ({
-      ...prevState,
-      userinfo: [...this.state.userinfo, info]
-    }))
-    console.log(this.state.userinfo)
+  const handleChangeUserinfo = (info) => {
+    setUserInfo([...userinfo, info]);
 
   }
 
-  handleRemoveItem(item){
-    this.setState(prevState => ({
-      ...prevState,
-      todoItems: prevState.todoItems.filter(i => i.id !== item.id),
-      filteredItems: prevState.filteredItems.filter(i => i.id !== item.id),
-      unCompletedItems: !item.isCompleted ? prevState.unCompletedItems - 1 : prevState.unCompletedItems
-    }))
+  const handleRemoveItem = (item) => {
+    console.log(item)
+    setTodoItems(todoItems.filter(i => i.id !== item.id));
+    console.log(todoItems);
 
   }
 
-  render() {
-    const { filteredItems, unCompletedItems, currentFilter } = this.state;
-    const {username, email} = this.state.userinfo;
-    const {userinfo} = this.state;
     return (
       <div className="App">
         <header className="App-header">
           <p className="todos">todos</p>
         </header>
         <InputField
-          addItem={(title) => this.handleAddItem(title)}
-          completedAll={() => this.handleToogleCompletedAll()}
+          addItem={(title) => handleAddItem(title)}
+          completedAll={() => handleToogleCompletedAll()}
         />
         {filteredItems.length > 0 &&
           filteredItems.map((item, index) => (
             <TodoItem
               key={index}
               item={item}
-              toggleCompleted={() => this.onItemClicked(item)}
-              editTitle={(item, title) => this.handleEditTitle(item, title)}
-              removeItem={item => this.handleRemoveItem(item)}
+              toggleCompleted={() => onItemClicked(item)}
+              editTitle={(item, title) => handleEditTitle(item, title)}
+              removeItem={item => handleRemoveItem(item)}
             />
           ))}
-        {this.state.todoItems.length > 0 && (
+        {todoItems.length > 0 && (
           <div className="footer">
             <div className="footer__left-item">
-              {unCompletedItems > 1
-                ? `${unCompletedItems} items left`
-                : `${unCompletedItems} item left`}
+              {uncompletedItems > 1
+                ? `${uncompletedItems} items left`
+                : `${uncompletedItems} item left`}
             </div>
             <div className="footer__right-item">
               <span
                 className={currentFilter === "all" ? "active-span" : ""}
-                onClick={() => this.handleShowAllItems()}
+                onClick={() => handleShowAllItems()}
               >
                 All
               </span>
               <span
                 className={currentFilter === "active" ? "active-span" : ""}
-                onClick={() => this.handleShowActiveItems()}
+                onClick={() => handleShowActiveItems()}
               >
                 Active
               </span>
               <span
                 className={currentFilter === "completed" ? "active-span" : ""}
-                onClick={() => this.handleShowCompletedItems()}
+                onClick={() => handleShowCompletedItems()}
               >
                 Completed
               </span>
             </div>
             <div
               className="clear-completed"
-              onClick={() => this.handleClearCompleted()}
+              onClick={() => handleClearCompleted()}
             >
               Clear Completed
             </div>
           </div>
         )}
 
-        <FormDemo changeInfo={(info) => this.handleChangeUserinfo(info)}/>
+        <FormDemo changeInfo={(info) => handleChangeUserinfo(info)}/>
         {userinfo.length > 0 ? (
           userinfo.map((user) => (
             <FormStyles style={{flexDirection: "row"}}>
@@ -263,6 +185,5 @@ class App extends React.Component {
       </div>
     );
   }
-}
 
 export default App;

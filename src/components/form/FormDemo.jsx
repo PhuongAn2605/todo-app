@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import FilledInput from "@mui/material/FilledInput";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -7,50 +7,50 @@ import Button from "@mui/material/Button";
 
 import { ButtonStyles, FormStyles, InputStyles } from "./FormDemo.styles.jsx";
 
-export default class FormDemo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      info: {
-        username: "",
-        email: "",
-      },
-    };
-  }
+const FormDemo = (props) => {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     info: {
+  //       username: "",
+  //       email: "",
+  //     },
+  //   };
+  // }
 
-  handleInputChange(event) {
-    //   console.log(event.currentTarget)
-    this.setState({
-      info: {
-        ...this.state.info,
-        [event.currentTarget.name]: event.currentTarget.value,
-      },
-    });
-    // console.log(this.state.info);
-  }
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
 
-  handleOnSubmit(event) {
+  // const handleInputChange = (event) => {
+  //     console.log(event.currentTarget.name)
+  //   setInfo({
+  //     info: {
+  //       ...info,
+  //       [event.currentTarget.name]: event.currentTarget.value,
+  //     },
+  //   });
+  //   // console.log(info);
+  // }
+
+  const handleOnSubmit = (event) => {
     //   console.log(event)
     event.preventDefault();
-    // const newInfo= {
-    //   [event.currentTarget.name]: event.currentTarget.value,
-    // };
 
-    // console.log(newInfo);
+    const info = {
+      username,
+      email
+    }
 
-    console.log(this.state.info)
-    this.props.changeInfo(this.state.info);
-    this.setState({
-      info: { email: "", username: "" },
-    });
+    props.changeInfo(info);
+    setUsername('');
+    setEmail('');
   }
 
-  render() {
-    const { username, email } = this.state.info;
-    const { info } = this.state;
+    // const { username, email } = info;
+
     return (
       <div className="form-demo">
-        <form onSubmit={(e) => this.handleOnSubmit(e)}>
+        <form onSubmit={(e) => handleOnSubmit(e)}>
           <FormStyles>
             <FormControl variant="standard">
               <InputLabel htmlFor="component-simple">Username</InputLabel>
@@ -60,7 +60,7 @@ export default class FormDemo extends React.Component {
                 value={username}
                 type="text"
                 required
-                onChange={(event) => this.handleInputChange(event)}
+                onChange={(event) => setUsername(event.currentTarget.value)}
               />
             </FormControl>
             <FormControl variant="standard">
@@ -71,7 +71,7 @@ export default class FormDemo extends React.Component {
                 value={email}
                 type="email"
                 required
-                onChange={(event) => this.handleInputChange(event)}
+                onChange={(event) => setEmail(event.currentTarget.value)}
               />
             </FormControl>
             <Button
@@ -92,4 +92,5 @@ export default class FormDemo extends React.Component {
       </div>
     );
   }
-}
+
+export default FormDemo;

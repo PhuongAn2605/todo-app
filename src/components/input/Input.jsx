@@ -1,26 +1,24 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 import "./Input.scss";
 
-class InputField extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      inputValue: "",
-    };
-  }
+const InputField = (props) => {
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     inputValue: "",
+  //   };
+  // }
 
-  handleChangeInput(event) {
+  // const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef(null);
+
+  const handleChangeInput = (event) => {
     const value = event.currentTarget.value;
-    // console.log(value);
-    this.setState({
-      inputValue: value,
-    });
+    inputRef.current.value = value;
   }
-  render() {
-    const { addItem, completedAll } = this.props;
-    const { inputValue } = this.state;
+    const { addItem, completedAll } = props;
 
     return (
       <div className="text-field">
@@ -32,22 +30,19 @@ class InputField extends React.Component {
         <input
           type="text"
           placeholder="What needs to be done?"
-          value={inputValue}
+          // value={inputRef.current}
+          ref={inputRef}
           required
-          onChange={(event) => this.handleChangeInput(event)}
+          onChange={(event) => handleChangeInput(event)}
           onKeyPress={event => {
               if(event.key === 'Enter'){
                 event.preventDefault();
-                  addItem(inputValue);
-                  this.setState({
-                      inputValue: ''
-                  })
+                  addItem(inputRef.current.value);
+                  inputRef.current.value = null;
               }
           } }
         />
       </div>
     );
   }
-}
-
 export default InputField;

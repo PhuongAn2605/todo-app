@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { connect } from "react-redux";
 import FilledInput from "@mui/material/FilledInput";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -6,34 +7,16 @@ import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
 
 import { ButtonStyles, FormStyles, InputStyles } from "./FormDemo.styles.jsx";
+import { addUser } from "../../redux/user/user.actions.js";
 
-const FormDemo = (props) => {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     info: {
-  //       username: "",
-  //       email: "",
-  //     },
-  //   };
-  // }
+const FormDemo = ({ addUser }) => {
+
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
-  // const handleInputChange = (event) => {
-  //     console.log(event.currentTarget.name)
-  //   setInfo({
-  //     info: {
-  //       ...info,
-  //       [event.currentTarget.name]: event.currentTarget.value,
-  //     },
-  //   });
-  //   // console.log(info);
-  // }
 
   const handleOnSubmit = (event) => {
-    //   console.log(event)
     event.preventDefault();
 
     const info = {
@@ -41,12 +24,10 @@ const FormDemo = (props) => {
       email
     }
 
-    props.changeInfo(info);
+    addUser(info);
     setUsername('');
     setEmail('');
   }
-
-    // const { username, email } = info;
 
     return (
       <div className="form-demo">
@@ -93,4 +74,9 @@ const FormDemo = (props) => {
     );
   }
 
-export default FormDemo;
+
+  const mapDispatchToProps = dispatch => ({
+    addUser: user => dispatch(addUser(user))
+  })
+
+export default connect(null, mapDispatchToProps)(FormDemo);

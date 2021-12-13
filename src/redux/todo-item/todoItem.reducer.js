@@ -9,17 +9,13 @@ const INITIAL_STATE = {
 };
 
 const todoItemReducer = (state = INITIAL_STATE, action) => {
-  // console.log(action.payload)
   switch (action.type) {
     case TodoItemTypes.ADD_ITEM:
-      console.log("Add");
-      // console.log(action.payload)
       return {
         ...state,
         todoItems: addItem(state.todoItems, action.payload),
       };
     case TodoItemTypes.EDIT_ITEM:
-    //   console.log(action);
       return {
         ...state,
         todoItems: editTitle(
@@ -29,14 +25,12 @@ const todoItemReducer = (state = INITIAL_STATE, action) => {
         ),
       };
     case TodoItemTypes.DELETE_ITEM:
-        console.log('delete')
         return {
             ...state,
             todoItems: deleteItem(state.todoItems, action.payload)
         }
 
     case TodoItemTypes.TOOGLE_COMPLETED:
-        console.log('toggle')
         return {
             ...state,
             todoItems: toggleCompleted(state.todoItems, action.payload)

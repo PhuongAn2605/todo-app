@@ -3,9 +3,10 @@ import { connect } from "react-redux";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 import "./Input.scss";
-import { addItem } from "../../redux/todo-item/todoItem.actions";
+import { addItem, toggleCompletedAll } from "../../redux/todo-item/todoItem.actions";
 
-const InputField = ({ addItem }) => {
+
+const InputField = ({ addItem, toggleCompletedAll }) => {
   // constructor() {
   //   super();
   //   this.state = {
@@ -27,7 +28,7 @@ const InputField = ({ addItem }) => {
         <KeyboardArrowDownOutlinedIcon
           fontSize="large"
           style={{ color: "#ccc" }}
-          // onClick={() => completedAll()}
+          onClick={() => toggleCompletedAll()}
         />
         <input
           type="text"
@@ -39,8 +40,13 @@ const InputField = ({ addItem }) => {
           onKeyPress={event => {
               if(event.key === 'Enter'){
                 event.preventDefault();
+                if(inputRef.current.value.length === 0){
+                  alert('Empty task is not accepted!')
+                }else{
                   addItem(inputRef.current.value);
                   inputRef.current.value = null;
+                }
+                 
               }
           } }
         />
@@ -49,7 +55,9 @@ const InputField = ({ addItem }) => {
   }
 
 const mapDispatchToProps = dispatch => ({
-  addItem: title => dispatch(addItem(title))
+  addItem: title => dispatch(addItem(title)),
+  toggleCompletedAll: () => dispatch(toggleCompletedAll())
+
 });
 
 

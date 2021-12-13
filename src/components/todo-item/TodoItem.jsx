@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import "./TodoItem.scss";
 import { deleteItem, editTitle, toggleCompleted } from "../../redux/todo-item/todoItem.actions";
 
-const TodoItem = ({item, toggleCompleted, editTitle, deleteItem}) => {
+const TodoItem = ({item, toggleCompleted, editTitle, deleteItem }) => {
 
   const [title, setTitle] = useState('');
   const [edit, setEdit] = useState(false);
@@ -55,7 +55,7 @@ const TodoItem = ({item, toggleCompleted, editTitle, deleteItem}) => {
         <EditIcon onClick={()=> {
           setEdit(!edit)
         }} />
-        <DeleteIcon onClick={ (item) => deleteItem(item)}/>
+        <DeleteIcon onClick={ () => deleteItem(item)}/>
         </div>
       </div>
     );

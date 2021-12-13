@@ -1,13 +1,11 @@
 import { FormControlUnstyledContext } from "@mui/material";
 import FilterTypes from "./todoItem.filterTypes";
 import TodoItemTypes from "./todoItem.types";
-import { addItem, editItem, deleteItem, editTitle, toggleCompleted } from "./todoItem.utils";
+import { addItem, editItem, deleteItem, editTitle, toggleCompleted, toggleCompletedAll, clearCompleted } from "./todoItem.utils";
 
 const INITIAL_STATE = {
   todoItems: [],
-  unCompletedItemsCount: 0,
-//   currentFilter: FilterTypes.ALL,
-  filteredItems: []
+  completedAll: false
 };
 
 const todoItemReducer = (state = INITIAL_STATE, action) => {
@@ -19,7 +17,6 @@ const todoItemReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         todoItems: addItem(state.todoItems, action.payload),
-        unCompletedItemsCount: state.unCompletedItemsCount + 1
       };
     case TodoItemTypes.EDIT_ITEM:
     //   console.log(action);
@@ -32,10 +29,10 @@ const todoItemReducer = (state = INITIAL_STATE, action) => {
         ),
       };
     case TodoItemTypes.DELETE_ITEM:
+        console.log('delete')
         return {
             ...state,
-            todoItems: deleteItem(state.todoItems, action.payload),
-            unCompletedItemsCount: state.unCompletedItemsCount - 1
+            todoItems: deleteItem(state.todoItems, action.payload)
         }
 
     case TodoItemTypes.TOOGLE_COMPLETED:
@@ -44,24 +41,16 @@ const todoItemReducer = (state = INITIAL_STATE, action) => {
             ...state,
             todoItems: toggleCompleted(state.todoItems, action.payload)
         }
-    case TodoItemTypes.SHOW_ALL:
-        return {
-            ...state,
-            // currentFilter: FilterTypes.ALL,
-            filteredItems: [...state.todoItems]
-        }
-    case TodoItemTypes.SHOW_ACTIVE:
-        return {
-            ...state,
-            // currentFilter: FilterTypes.ACTIVE,
-            filteredItems: state.todoItems.filter(item => !item.isCompleted)
-        }
-    case TodoItemTypes.SHOW_COMPLETED:
-        return {
-            ...state,
-            // currentFilter: FilterTypes.COMPLETED,
-            filteredItems: state.todoItems.filter(item => item.isCompleted)
-        }
+    case TodoItemTypes.TOGGLE_COMPLETED_ALL:
+      return {
+        todoItems: toggleCompletedAll(state.todoItems, state.completedAll),
+        completedAll: !state.completedAll
+      }
+    case TodoItemTypes.CLEAR_COMPLETED:
+      return {
+        ...state,
+        todoItems: clearCompleted(state.todoItems)
+      }
     default:
       return state;
   }

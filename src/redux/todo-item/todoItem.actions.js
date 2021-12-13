@@ -23,14 +23,10 @@ export const toggleCompleted = item => ({
     payload: item
 });
 
-export const showAllItems = () => ({
-    type: TodoItemTypes.SHOW_ALL
-})
+export const toggleCompletedAll = () => ({
+    type: TodoItemTypes.TOGGLE_COMPLETED_ALL
+});
 
-export const showActiveItems = () => ({
-    type: TodoItemTypes.SHOW_ACTIVE
-})
-
-export const showCompletedItems = () => ({
-    type: TodoItemTypes.SHOW_COMPLETED
-})
+export const clearCompleted = () => ({
+    type: TodoItemTypes.CLEAR_COMPLETED
+});

@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import "./TodoItem.scss";
+import { deleteItem, editTitle, toggleCompleted } from "../../redux/todo-item/todoItem.actions";
 
-const TodoItem = (props) => {
-
-  console.log(props);
+const TodoItem = ({item, toggleCompleted, editTitle, deleteItem}) => {
 
   const [title, setTitle] = useState('');
   const [edit, setEdit] = useState(false);
 
   useEffect(() => {
 
-    setTitle(props.item.title);
-  }, [props]);
+    setTitle(item.title);
+  }, [item]);
 
-    const { item, toggleCompleted, editTitle, removeItem } = props;
+    // const { item, toggleCompleted, editTitle, removeItem } = props;
     return (
       <div className="todo-item">
         {item.isCompleted ? (
-          <CheckCircleOutlineOutlinedIcon onClick={toggleCompleted} />
+          <CheckCircleOutlineOutlinedIcon onClick={() => toggleCompleted(item)} />
         ) : (
-          <CircleOutlinedIcon onClick={toggleCompleted} />
+          <CircleOutlinedIcon onClick={() => toggleCompleted(item)} />
         )}
         {edit && <input
           className={
@@ -55,10 +55,16 @@ const TodoItem = (props) => {
         <EditIcon onClick={()=> {
           setEdit(!edit)
         }} />
-        <DeleteIcon onClick={ () => removeItem(item)}/>
+        <DeleteIcon onClick={ (item) => deleteItem(item)}/>
         </div>
       </div>
     );
   }
 
-export default TodoItem;
+  const mapDispatchToProps = dispatch => ({
+    editTitle: (item, title) => dispatch(editTitle(item, title)),
+    deleteItem: item => dispatch(deleteItem(item)),
+    toggleCompleted: item => dispatch(toggleCompleted(item))
+  })
+
+export default connect(null, mapDispatchToProps)(TodoItem);

@@ -1,9 +1,11 @@
 import React, { useRef, useState } from "react";
+import { connect } from "react-redux";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 import "./Input.scss";
+import { addItem } from "../../redux/todo-item/todoItem.actions";
 
-const InputField = (props) => {
+const InputField = ({ addItem }) => {
   // constructor() {
   //   super();
   //   this.state = {
@@ -18,14 +20,14 @@ const InputField = (props) => {
     const value = event.currentTarget.value;
     inputRef.current.value = value;
   }
-    const { addItem, completedAll } = props;
+    // const { addItem, completedAll } = props;
 
     return (
       <div className="text-field">
         <KeyboardArrowDownOutlinedIcon
           fontSize="large"
           style={{ color: "#ccc" }}
-          onClick={() => completedAll()}
+          // onClick={() => completedAll()}
         />
         <input
           type="text"
@@ -45,4 +47,10 @@ const InputField = (props) => {
       </div>
     );
   }
-export default InputField;
+
+const mapDispatchToProps = dispatch => ({
+  addItem: title => dispatch(addItem(title))
+});
+
+
+export default connect(null, mapDispatchToProps)(InputField);

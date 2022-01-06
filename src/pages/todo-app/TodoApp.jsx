@@ -9,22 +9,23 @@ import TodoItem from "../../components/todo-item/TodoItem";
 import { LinkStyles, TitleStyles } from "../utils/styles";
 
 import {
-  clearCompleted,
-  showActiveItems,
-  showAllItems,
-  showCompletedItems,
+  clearCompletedAll,
+  fetchTodoItems,
 } from "../../redux/todo-item/todoItem.actions";
 import FilterTypes from "../../redux/todo-item/todoItem.filterTypes";
 
-const TodoApp = ({ todoItems, clearCompleted }) => {
+const TodoApp = ({ todoItems, clearCompleted, fetchTodoItems }) => {
   const [currentFilter, setCurrentFilter] = useState(FilterTypes.ALL);
   const [filteredItems, setFilteredItems] = useState([]);
   const [uncompletedItemsCount, setUncompletedItemsCount] = useState(0);
-  const [userinfo, setUserInfo] = useState([]);
 
   useEffect(() => {
+    fetchTodoItems();
     setCurrentFilter(FilterTypes.ALL);
-  }, []);
+  }, [fetchTodoItems]);
+
+  // console.log(todoItems);
+
 
   useEffect(() => {
     if (currentFilter === FilterTypes.ALL) {
@@ -34,7 +35,7 @@ const TodoApp = ({ todoItems, clearCompleted }) => {
     } else if (currentFilter === FilterTypes.COMPLETED) {
       setFilteredItems(todoItems.filter((item) => item.isCompleted));
     }
-    console.log(filteredItems);
+    // console.log(filteredItems);
   }, [currentFilter, todoItems]);
 
   useEffect(() => {
@@ -105,7 +106,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  clearCompleted: () => dispatch(clearCompleted()),
+  clearCompleted: () => dispatch(clearCompletedAll()),
+  fetchTodoItems: () => dispatch(fetchTodoItems())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TodoApp);

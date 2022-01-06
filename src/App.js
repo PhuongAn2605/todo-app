@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./App.scss";
 
 import {
@@ -12,8 +12,6 @@ import UserForm from "./pages/user-form/UserForm";
 
 const App = () => {
 
-
-  const [currentLink, setCurrrentLink] = useState('/');
 
   return (
     <React.Fragment>

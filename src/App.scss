@@ -38,6 +38,7 @@
       border: 1px solid #bbb;
       border-radius: 3px;
       background-color: #eee;
+      cursor: pointer;
     }
     .active-span{
       border: 1px solid #bbb;
@@ -49,6 +50,7 @@
 
   .clear-completed:hover{
     text-decoration: underline;
+    cursor: pointer;
 
   }
 

@@ -1,12 +1,11 @@
 import React, {useState} from "react";
 import { connect } from "react-redux";
-import FilledInput from "@mui/material/FilledInput";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
 
-import { ButtonStyles, FormStyles, InputStyles } from "./FormDemo.styles.jsx";
+import { FormStyles } from "./FormDemo.styles.jsx";
 import { addUser } from "../../redux/user/user.actions.js";
 
 const FormDemo = ({ addUser }) => {

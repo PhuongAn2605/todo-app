@@ -1,34 +1,27 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { connect } from "react-redux";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 
 import "./Input.scss";
-import { addItem, toggleCompletedAll } from "../../redux/todo-item/todoItem.actions";
+import { addNewTodoItem, toggleCompletedAll } from "../../redux/todo-item/todoItem.actions";
 
 
-const InputField = ({ addItem, toggleCompletedAll }) => {
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     inputValue: "",
-  //   };
-  // }
+const InputField = ({ addItem, toggleCompletedAll, completedAll }) => {
 
-  // const [inputValue, setInputValue] = useState('');
+
   const inputRef = useRef(null);
 
   const handleChangeInput = (event) => {
     const value = event.currentTarget.value;
     inputRef.current.value = value;
   }
-    // const { addItem, completedAll } = props;
 
     return (
       <div className="text-field">
         <KeyboardArrowDownOutlinedIcon
           fontSize="large"
           style={{ color: "#ccc" }}
-          onClick={() => toggleCompletedAll()}
+          onClick={() => toggleCompletedAll(completedAll)}
         />
         <input
           type="text"
@@ -43,7 +36,7 @@ const InputField = ({ addItem, toggleCompletedAll }) => {
                 if(inputRef.current.value.length === 0){
                   alert('Empty task is not accepted!')
                 }else{
-                  addItem(inputRef.current.value);
+                  addItem({title: inputRef.current.value });
                   inputRef.current.value = null;
                 }
                  
@@ -54,11 +47,15 @@ const InputField = ({ addItem, toggleCompletedAll }) => {
     );
   }
 
+const mapStateToProps = state => ({
+  completedAll: state.todoItem.completedAll
+})
+
 const mapDispatchToProps = dispatch => ({
-  addItem: title => dispatch(addItem(title)),
-  toggleCompletedAll: () => dispatch(toggleCompletedAll())
+  addItem: title => dispatch(addNewTodoItem(title)),
+  toggleCompletedAll: (completedAll) => dispatch(toggleCompletedAll(completedAll))
 
 });
 
 
-export default connect(null, mapDispatchToProps)(InputField);
+export default connect(mapStateToProps, mapDispatchToProps)(InputField);
